@@ -4,29 +4,11 @@ This repository contains the implementation and experimental datasets for our st
 
 ---
 
-## Repository Structure
+data: preprocessed experimental datasets used in our paper.
 
-.
-├── data//
-└── Preprocessed experimental datasets used in our paper
-├── ksecforest
-└── Source code of the KSECForest index construction and query algorithms
-├── ksebgraph
-└── Source code of the KSEBGraph index construction and query algorithms
-├── build.sh
-└── README.md
+ksecforest: source code of the KSECForest index construction and query algorithms.
 
-**data/**
-
-Preprocessed experimental datasets used in our paper.
-
-""ksecforest/""
-
-Source code of the KSECForest index construction and query algorithms.
-
-""ksebgraph/""
-
-Source code of the KSEBGraph index construction and query algorithms.
+ksebgraph: source code of the KSEBGraph index construction and query algorithms.
 
 ---
 
@@ -66,7 +48,7 @@ After execution, two binary files will be generated:
 
 To perform a span-constrained truss community query, run:
 
-./<binary_name> query <binary_graph_file> <binary_index_file> <query_file> <k> <delta>
+./<binary_name> query <binary temporal_graph_file> <binary_index_file> <query_file> <k> <delta>
 
 Parameters:
 
