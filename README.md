@@ -1,138 +1,87 @@
 # Span-Constrained Truss Community Search on Temporal Graphs
 
-# Repository Structure
+This repository contains the implementation and experimental datasets for our study on Span-Constrained Truss Community Search on Temporal Graphs.
 
-# 
+---
 
-# data/
+## Repository Structure
 
-# Preprocessed experimental datasets used in our paper.
+.
+├── data/
+│   └── Preprocessed experimental datasets used in our paper
+├── ksecforest/
+│   └── Source code of the KSECForest index construction and query algorithms
+├── ksebgraph/
+│   └── Source code of the KSEBGraph index construction and query algorithms
+├── build.sh
+└── README.md
 
-# 
+data/
+Preprocessed experimental datasets used in our paper.
 
-# ksecforest/
+ksecforest/
+Source code of the KSECForest index construction and query algorithms.
 
-# Source code of the KSECForest index construction and query algorithms.
+ksebgraph/
+Source code of the KSEBGraph index construction and query algorithms.
 
-# 
+---
 
-# ksebgraph/
+## Compilation
 
-# Source code of the KSEBGraph index construction and query algorithms.
+Compile the binary executables for both indexes:
 
-# 
+bash build.sh
 
-# Compilation
+After compilation, the following executables will be generated:
 
-# 
+ksebgraph  
+ksecforest
 
-# Compile the binary executables for both indexes:
+---
 
-# 
+## Index Construction
 
-# bash build.sh
+KSEBGraph Index
 
-# 
+./ksebgraph build <dataset_name> 0   # TwoPhase algorithm  
+./ksebgraph build <dataset_name> 1   # OnePass algorithm  
 
-# 
+KSECForest Index
 
-# After compilation, two executables will be generated:
+./ksecforest build <dataset_name> 0  # TwoPhase algorithm  
+./ksecforest build <dataset_name> 1  # OnePass algorithm  
 
-# 
+After execution, two binary files will be generated:
 
-# ksebgraph
+1. A binary file of the original temporal graph  
+2. A binary file of the corresponding index  
 
-# 
+---
 
-# ksecforest
+## Query Processing
 
-# 
+To perform a span-constrained truss community query, run:
 
-# Index Construction
+./<binary_name> query <binary_graph_file> <binary_index_file> <query_file> <k> <delta>
 
-# KSEBGraph Index
+Parameters:
 
-# ./ksebgraph build <dataset\_name> 0   # TwoPhase algorithm
+<binary_name>  
+ksebgraph or ksecforest
 
-# ./ksebgraph build <dataset\_name> 1   # OnePass algorithm
+<binary_graph_file>  
+Binary file of the temporal graph
 
-# 
+<binary_index_file>  
+Binary file of the constructed index
 
-# KSECForest Index
+<query_file>  
+File containing query vertices
 
-# ./ksecforest build <dataset\_name> 0  # TwoPhase algorithm
+<k>  
+Truss parameter
 
-# ./ksecforest build <dataset\_name> 1  # OnePass algorithm
-
-# 
-
-# 
-
-# After execution, two binary files will be generated:
-
-# 
-
-# A binary file of the original temporal graph
-
-# 
-
-# A binary file of the corresponding index
-
-# 
-
-# Query Processing
-
-# 
-
-# To perform a span-constrained truss community query:
-
-# 
-
-# ./<binary\_name> query <binary\_graph\_file> <binary\_index\_file> <query\_file> <k> <delta>
-
-# 
-
-# 
-
-# Parameters:
-
-# 
-
-# <binary\_name>: ksebgraph or ksecforest
-
-# 
-
-# <binary\_graph\_file>: binary file of the temporal graph
-
-# 
-
-# <binary\_index\_file>: binary file of the constructed index
-
-# 
-
-# <query\_file>: file containing query vertices
-
-# 
-
-# <k>: truss parameter
-
-# 
-
-# <delta>: span constraint
-
-# 
-
-# Notes
-
-# 
-
-# All datasets are preprocessed to match the input format described in the paper.
-
-# 
-
-# Vertices are indexed with consecutive integer IDs.
-
-# 
-
-# The choice between TwoPhase and OnePass controls the index construction strategy.
+<delta>  
+Span constraint
 
