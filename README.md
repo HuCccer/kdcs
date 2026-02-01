@@ -64,9 +64,7 @@ Binary file of the constructed index
 <query_file>  
 File containing query vertices
 
-<k>  
-Truss parameter
+<k>: Truss parameter
 
-<delta>  
-Span constraint
+<delta>: Span constraint
 
