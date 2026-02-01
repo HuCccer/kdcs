@@ -48,7 +48,7 @@ After execution, two binary files will be generated:
 
 To perform a span-constrained truss community query, run:
 
-./<binary_name> query <binary temporal_graph_file> <binary_index_file> <query_file> <k> <delta>
+./<binary_name> query <binary temporal_graph_file> <binary_index_file> <query_file> <k value> <delta value>
 
 Parameters:
 
@@ -64,7 +64,9 @@ Binary file of the constructed index
 <query_file>  
 File containing query vertices
 
-""<k>"": Truss parameter
+<k value> 
+Truss parameter
 
-""<delta>"": Span constraint
+<delta value>
+ Span constraint
 
