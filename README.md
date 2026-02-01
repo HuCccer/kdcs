@@ -7,7 +7,7 @@ This repository contains the implementation and experimental datasets for our st
 ## Repository Structure
 
 .
-├── data
+├── data//
 └── Preprocessed experimental datasets used in our paper
 ├── ksecforest
 └── Source code of the KSECForest index construction and query algorithms
@@ -16,15 +16,15 @@ This repository contains the implementation and experimental datasets for our st
 ├── build.sh
 └── README.md
 
-**data**
+**data/**
 
 Preprocessed experimental datasets used in our paper.
 
-""ksecforest""
+""ksecforest/""
 
 Source code of the KSECForest index construction and query algorithms.
 
-""ksebgraph""
+""ksebgraph/""
 
 Source code of the KSEBGraph index construction and query algorithms.
 
