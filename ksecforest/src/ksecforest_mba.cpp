@@ -64,7 +64,6 @@ void MbaF::loadGraph(const std::string& file_name) {
     for (int te = 0; te < temporal_edges; te++){
         uint32_t t, v1, v2;
         infile >> t >> v1 >> v2;
-		// if (t <= 1) continue;
         if (v1 > v2) std::swap(v1, v2);
         ET[{v1,v2}].emplace_back(t);
     }

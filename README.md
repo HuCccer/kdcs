@@ -20,8 +20,8 @@ bash build.sh
 
 After compilation, the following executables will be generated:
 
-ksebgraph  
-ksecforest
+kseb (binary file) 
+ksec (binary file) 
 
 ---
 
@@ -29,13 +29,13 @@ ksecforest
 
 KSEBGraph Index
 
-./ksebgraph build <dataset_name> 0   # TwoPhase algorithm  
-./ksebgraph build <dataset_name> 1   # OnePass algorithm  
+./kseb build <dataset_name> 0   # TwoPhase algorithm  
+./kseb build <dataset_name> 1   # OnePass algorithm  
 
 KSECForest Index
 
-./ksecforest build <dataset_name> 0  # TwoPhase algorithm  
-./ksecforest build <dataset_name> 1  # OnePass algorithm  
+./ksec build <dataset_name> 0  # TwoPhase algorithm  
+./ksec build <dataset_name> 1  # OnePass algorithm  
 
 After execution, two binary files will be generated:
 
@@ -53,7 +53,7 @@ To perform a span-constrained truss community query, run:
 Parameters:
 
 <binary_name>  
-ksebgraph or ksecforest
+kseb or ksec
 
 <binary_graph_file>  
 Binary file of the temporal graph

@@ -1,17 +1,17 @@
 #!/bin/bash
 set -e
 echo "Compiling..."
-rm -f ksebgraph ksecforest
+rm -f kseb ksec
 
 g++ -g -O2 -std=c++17 \
     ./ksebgraph/test/ksebgraphTestMain.cpp \
     ./ksebgraph/src/ksebgraph_mba.cpp \
-    -o ./ksebgraph
+    -o ./kseb
 
 g++ -g -O2 -std=c++17 \
     ./ksecforest/test/ksecforestTestMain.cpp \
     ./ksecforest/src/ksecforest_mba.cpp \
-    -o ./ksecforest
+    -o ./ksec
 
 echo "Compilation finished."
 echo

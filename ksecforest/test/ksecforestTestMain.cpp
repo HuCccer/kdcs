@@ -21,8 +21,6 @@ int main(int argc, char** argv) {
         return 1;
     }
     std::string mode = argv[1];
-    std::string mode = "query";
-
 
     /* ================= BUILD ================= */
     if (mode == "build") {
@@ -59,8 +57,6 @@ int main(int argc, char** argv) {
             auto end = std::chrono::steady_clock::now();
             printf("Index construction costs %.3f ms\n",
             std::chrono::duration<double, std::milli>(end - beg).count());
-            printf("Index construction costs %.3f ms\n",
-            std::chrono::duration<double, std::milli>(end - beg).count());
         }
     }
 
@@ -84,7 +80,6 @@ int main(int argc, char** argv) {
         infile.read((char*)&m, sizeof(m));
         infile.close();
         MbaF mbaF(n, m * 2);
-        mbaF.readKSECForestIndexFromFile(ksecforest_file);
         std::vector<int> query_vertices;
         std::ifstream qf(queries_file);
         int v;
