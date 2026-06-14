@@ -579,14 +579,14 @@ vector<vector<int>> MbaF::searchCommunityByKSpanIndex(int query, int k, uint32_t
 			result.emplace_back(std::move(Ai));
 		}
     }
-	int size = 0;
-    for (auto& community : result) {
-		size += community.size();
+	// int size = 0;
+    // for (auto& community : result) {
+	// 	size += community.size();
 		// for (int& e : community) {
 		// 	cout<<e<<" ";
 		// }
-	}
-	cout<<size<<endl;
+	// }
+	// cout<<size<<endl;
     return result;
  }
 
@@ -621,14 +621,14 @@ vector<vector<uint32_t>> MbaF::searchCommunityByKSECForest(uint32_t query, uint3
         }
         result.emplace_back(std::move(Ai));
     }
-	int size = 0;
-    for (auto& community : result) {
-		size += community.size();
+	// int size = 0;
+    // for (auto& community : result) {
+	// 	size += community.size();
 		// for (int& e : community) {
 		// 	cout<<e<<" ";
 		// }
-	}
-	cout<<size<<endl;
+	// }
+	// cout<<size<<endl;
     return result;
 }
 

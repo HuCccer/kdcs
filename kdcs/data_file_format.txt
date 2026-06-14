@@ -1,0 +1,43 @@
+// Example of the temporal graph input format.
+// NOTE: All comments must be removed before running the code.
+//
+// The first line contains three integers:
+//   (1) T_max : the maximum number of timestamps
+//   (2) V     : the maximum vertex ID plus one
+//   (3) E     : the number of temporal edges
+//
+// Each subsequent line represents a temporal edge in the format:
+//   <timestamp> <source_vertex> <target_vertex>
+
+
+---
+// Example of the query input format.
+// Each line contains a single query vertex ID.
+v1
+v2
+v3
+v4
+...
+vn
+
+Notes: 
+Each query vertex ID must exist in the temporal graph.
+Queries are processed independently.
+The output is the span-constrained  k-truss community containing the query vertex.
+
+
+---
+// Example of index maintenance input format.
+// The first line is the number of temporal edges to be inserted.
+// Each line contains a single temporal edge <timestamp> <source_vertex> <target_vertex>.
+
+
+---
+
+## 📌 Summary
+
+- Temporal graph: `(t, u, v)` edges with metadata header  
+- Query file: one vertex per line  
+- Update file: list of new temporal edges  
+
+All inputs must strictly follow the required format.

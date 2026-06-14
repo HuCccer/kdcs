@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     }
     auto end = std::chrono::steady_clock::now();
     const auto dif = end - beg;
-    printf("Applying the query costs %f ms.\n",
-          std::chrono::duration<double, std::milli>(dif).count());
+    printf("Applying the query costs for %ld queries: %f ms.\n",
+          query_vertices.size(), std::chrono::duration<double, std::milli>(dif).count());
     return 0;
 }

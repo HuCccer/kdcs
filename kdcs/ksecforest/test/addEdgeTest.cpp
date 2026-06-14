@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     }
     const auto end = std::chrono::steady_clock::now();
     const auto dif = end - beg;
-    printf("Applying the edge insertion maintenance costs %f ms.\n",
-          std::chrono::duration<double, std::milli>(dif).count());
+    printf("Applying the edge insertion maintenance costs for %ld updates: %f ms.\n",
+          updates.size(), std::chrono::duration<double, std::milli>(dif).count());
     return 0;
 }
