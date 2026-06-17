@@ -2,14 +2,14 @@
 
 This repository implements the **KSECForest index** for efficient $(k,\delta)$-truss community search on dynamic temporal graphs.
 
-The system supports index construction, query processing, and dynamic maintenance under edge updates. All datasets used in experiments are provided in the `data/` directory.
+The system supports index construction, query processing, and dynamic maintenance under edge updates.
 
 ---
 
 ## Repository Structure
 
 - `data/`  
-  Preprocessed temporal graph datasets used in experiments.
+  temporal graph datasets used in experiments.
 
 - `ksecforest/`  
   Core implementation of KSECForest:

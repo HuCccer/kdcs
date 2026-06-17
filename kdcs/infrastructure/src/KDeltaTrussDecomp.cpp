@@ -11,6 +11,9 @@ KDeltaTruss::KDeltaTruss(const uint32_t n, const uint32_t l, TGraph& tg, std::ve
     : l_(l), n_(n), tg_(tg), k_(k), sup_(l_, 0), triMTSpan_(triMTSpan) {
     ASSERT_MSG(1 <= l_ && l_ < (static_cast<uint32_t>(1) << 29),
                 "it is required 64 <= l <= 2^29 for the ease of implementation");
+    visited    = std::vector<uint32_t>(l_, 0);
+    removed   = std::vector<uint32_t>(l_, 0);
+    ins   = std::vector<uint32_t>(l_, 0);
 }
 
 KDeltaTruss::KDeltaTruss(const uint32_t n, const uint32_t l, TGraph& tg, std::vector<uint32_t>& k, std::unordered_map<EdgT, uint32_t, pairHash>& triMTSpan, const std::string& fn)
@@ -149,7 +152,6 @@ void KDeltaTruss::kDeltaTrussDecomp() {
 		if(time2triangle[t].size() == 0) continue;
 		for(const auto& [e1, e2, e3] : time2triangle[t]){
 			Mc.insert({e1, e3}); 
-			// triMTSpan_[{e1, e3}] = t;
             uint32_t k1 = trussness[e1], k2 = trussness[e2], k3 = trussness[e3];
 			uint32_t mink = min(k1, min(k2, k3));
 			//update k-support
@@ -189,9 +191,7 @@ void KDeltaTruss::kDeltaTrussDecomp() {
 			span_[trussness[e]][e] = 0; trussness[e]--; 
 		}  
     }
-	// for (auto& [e1, e2, e3] : time2triangle[0]) {
-	// 	triMTSpan_[{e1, e3}] = 0;
-	// }
+
 	return;
 }
 
@@ -231,11 +231,10 @@ vector<vector<uint32_t>>  KDeltaTruss::XH_truss_maintenance(const uint32_t eid) 
 	uint32_t m = tg_.m();
 	// the maximum trussness of the edge that trussness can increase is k2 - 1
 	vector<vector<uint32_t>> L(k2);
-	vector<bool> inL(m, false);
 	vector<uint32_t> status(m, UINT32_MAX);
 	vector<vector<uint32_t>> inc(k2 + 1);
 	if (k1 == k2 - 1) {
-		L[k1].push_back(eid); inL[eid] = true;
+		L[k1].push_back(eid); ins[eid] = token;
 	} 
 	for (uint32_t k = k1; k > 0; k--) {
 		inc[k].push_back(eid);
@@ -244,10 +243,10 @@ vector<vector<uint32_t>>  KDeltaTruss::XH_truss_maintenance(const uint32_t eid) 
 		uint32_t min_k = std::min(k_[e1], k_[e2]);
 		if (min_k <= k2 - 1) {
 			if (k_[e1] == min_k) {
-				L[min_k].push_back(e1); inL[e1] = true;
+				L[min_k].push_back(e1); ins[e1] = token;
 			} 
 			if (k_[e2] == min_k) {
-				L[min_k].push_back(e2); inL[e2] = true;
+				L[min_k].push_back(e2); ins[e2] = token;
 			} 
 		}
 	});
@@ -265,13 +264,13 @@ vector<vector<uint32_t>>  KDeltaTruss::XH_truss_maintenance(const uint32_t eid) 
 				if (k_[e1] == k && status[e1] == k) return;
 				if (k_[e2] == k && status[e2] == k) return;
 				sup_[leid]++;
-				if (k_[e1] == k && !inL[e1]) tmpEdge.push_back(e1);
-				if (k_[e2] == k && !inL[e2]) tmpEdge.push_back(e2);
+				if (k_[e1] == k && ins[e1] != token) tmpEdge.push_back(e1);
+				if (k_[e2] == k && ins[e2] != token) tmpEdge.push_back(e2);
 			});
 			if (sup_[leid] > k) {
 				status[leid] = k + 1;
 				for (uint32_t teid : tmpEdge) {
-					L[k].push_back(teid); inL[teid] = true;
+					L[k].push_back(teid); ins[teid] = token;
 				}
 			} else {
 				subq.clear();
@@ -300,6 +299,7 @@ vector<vector<uint32_t>>  KDeltaTruss::XH_truss_maintenance(const uint32_t eid) 
 			sup_[leid] = 0;
 		}
 	}
+	token++;
 	return inc;
 }
 
@@ -337,11 +337,9 @@ void KDeltaTruss::insertE(const uint32_t e, const uint32_t timestamp) {
 		span_[kmax_].resize(l_, UINT32_MAX);
 	}
 	uint32_t m = tg_.m_;
-	vector<uint32_t> visited(m), removed(m), insq(m);
-	uint32_t token = 1, visitedtoken = 0;
 	for (uint32_t k = ke; k > 1; k--) {
 	 	assignKspanForEdges(inc, k);
-		maintenance(k, e, visited, removed, insq, token, visitedtoken);
+		maintenance(k, e);
 		// clear maintenance buffers
         for (uint32_t mts : touchedDeltaLevels_) deltaTriListBuf_[mts].clear();
 		for (uint32_t ksp : touchedCandidateLevels_) candidateEdgeBuf_[ksp].clear();
@@ -349,7 +347,7 @@ void KDeltaTruss::insertE(const uint32_t e, const uint32_t timestamp) {
         touchedDeltaLevels_.clear();
 		// update label token
 		token++;
-		visitedtoken += 2;
+		visittoken += 2;
 	}
 	// especially maintenance for k = 1
 	auto& kspan = span_[1];
@@ -380,8 +378,6 @@ void KDeltaTruss::insertT(const uint32_t e, const uint32_t timestamp) {
 	affected.resize(ke + 1);
 	for (uint32_t k = 1; k <= ke; k++) affected[k].clear();
 	if (ke == 0) return;
-	vector<uint32_t> visited(m), removed(m), insq(m);
-	uint32_t token = 1, visitedtoken = 0;
 	for (uint32_t k = ke; k > 1; k--) {
 		auto& kspan = span_[k];
 		for (const auto& [e1, e2] : trise) {
@@ -394,10 +390,10 @@ void KDeltaTruss::insertT(const uint32_t e, const uint32_t timestamp) {
 			if (kspan[e1] == maxKSpan) seed = e1;
 			else if (kspan[e2] == maxKSpan) seed = e2;
 			else seed = e;
-			maintenance(k, seed, visited, removed, insq, token, visitedtoken);
+			maintenance(k, seed);
 			if (kspan[seed] < kspan[e]) kspan[e] = kspan[seed];
 			clearMaintenanceBuffers(kspan[seed]);
-			token++; visitedtoken += 2;
+			token++; visittoken += 2;
 		}
 	}
 	// especially maintenance for k = 1
@@ -419,7 +415,7 @@ void KDeltaTruss::insertT(const uint32_t e, const uint32_t timestamp) {
 	} 
 }
 
-void KDeltaTruss::maintenance(uint32_t k, uint32_t seed, vector<uint32_t>& visited, vector<uint32_t>& removed, vector<uint32_t>& insq, uint32_t token, uint32_t visittoken) {
+void KDeltaTruss::maintenance(uint32_t k, uint32_t seed) {
 	auto& kspan = span_[k];
 	uint32_t level = kspan[seed];
 	TriIdMap validTri;
@@ -439,9 +435,9 @@ void KDeltaTruss::maintenance(uint32_t k, uint32_t seed, vector<uint32_t>& visit
 			if (removed[e1] == token || removed[e2] == token || removed[e3] == token) continue;
 			validTri[{e1, e3}] = false;
 			sup_[e1]--; sup_[e2]--; sup_[e3]--;
-			if(sup_[e1] < k && kspan[e1] >= level) { q.push_back(e1); insq[e1] = token;}
-			if(sup_[e2] < k && kspan[e2] >= level) { q.push_back(e2); insq[e2] = token;}
-			if(sup_[e3] < k && kspan[e3] >= level) { q.push_back(e3); insq[e3] = token;}
+			if(sup_[e1] < k && kspan[e1] >= level) { q.push_back(e1); ins[e1] = token;}
+			if(sup_[e2] < k && kspan[e2] >= level) { q.push_back(e2); ins[e2] = token;}
+			if(sup_[e3] < k && kspan[e3] >= level) { q.push_back(e3); ins[e3] = token;}
 			while(!q.empty()){
 				uint32_t eid = q.back(); q.pop_back();
 				removed[eid] = token;
@@ -459,15 +455,15 @@ void KDeltaTruss::maintenance(uint32_t k, uint32_t seed, vector<uint32_t>& visit
 					if(it == validTri.end() || it->second == false) return;
 					it->second = false;
 					sup_[eid]--; sup_[e1]--; sup_[e2]--;
-					if(sup_[e1] < k && kspan[e1] >= level && insq[e1] != token){
-						q.push_back(e1); insq[e1] = token;
+					if(sup_[e1] < k && kspan[e1] >= level && ins[e1] != token){
+						q.push_back(e1); ins[e1] = token;
 					}
-					if(sup_[e2] < k && kspan[e2] >= level && insq[e2] != token){
-						q.push_back(e2); insq[e2] = token;
+					if(sup_[e2] < k && kspan[e2] >= level && ins[e2] != token){
+						q.push_back(e2); ins[e2] = token;
 					} 	
 				});
-			}	
-		}
+			}
+		}	
 		if (removed[seed] == token) break;
 		if (level == 0) break;
 		level--;
@@ -501,14 +497,18 @@ void KDeltaTruss::expand(TriIdMap& validTri, vector<uint32_t>& seeds, vector<uin
 				if (kspan[e1] == level) {
 					seeds.push_back(e1);  visited[e1] = seenMark;
 				} else {
-					addCandidate(kspan[e1], e1); visited[e1] = seenMark;
+					if (mts < kspan[e1]) {
+						addCandidate(kspan[e1], e1); visited[e1] = seenMark;
+					}
 				} 
 			}
 			if (visited[e2] != seenMark && visited[e2] != doneMark) {
 				if (kspan[e2] == level) {
 					seeds.push_back(e2);  visited[e2] = seenMark;
 				} else {
-					addCandidate(kspan[e2], e2); visited[e2] = seenMark;
+					if (mts < kspan[e2]) {
+						addCandidate(kspan[e2], e2); visited[e2] = seenMark;
+					}
 				}
 			}
 		});

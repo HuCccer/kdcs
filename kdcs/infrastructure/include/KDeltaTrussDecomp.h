@@ -35,7 +35,7 @@ public:
     void assignKspanForEdges(std::vector<std::vector<uint32_t>>& inc, uint32_t k);
     void expand(TriIdMap& validTri, std::vector<uint32_t>& seeds, std::vector<uint32_t>& visited, uint32_t level, uint32_t k, uint32_t visittoken);
     std::vector<std::vector<uint32_t>> XH_truss_maintenance(const uint32_t e);
-    void maintenance(uint32_t k, uint32_t seed, std::vector<uint32_t>& visited, std::vector<uint32_t>& removed,  std::vector<uint32_t>& insq,  uint32_t token, uint32_t visittoken);
+    void maintenance(uint32_t k, uint32_t seed);
     std::vector<std::unordered_set<uint32_t>> addEdgeWithVariety(uint32_t e, uint32_t timestamp, bool variety);
     std::vector<std::unordered_set<uint32_t>> addEdge(uint32_t u, uint32_t v, uint32_t timestamp);
     inline uint32_t getTriMts(uint32_t e1, uint32_t e2, uint32_t e3)  {
@@ -126,6 +126,8 @@ public:
     std::vector<uint32_t> touchedCandidateLevels_;
     std::vector<uint32_t> touchedDeltaLevels_;
     std::vector<std::unordered_set<uint32_t>> affected;
+    std::vector<uint32_t> visited, removed, ins;
+	uint32_t token = 1, visittoken = 0;
     
 };
 }
